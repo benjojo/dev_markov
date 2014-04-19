@@ -5,7 +5,7 @@
 
 // Module Stuff
 MODULE_LICENCE("Apache"); // Change this to "GPL" if you get annoyed about
-						  // the kernal playing a crying fit about non GPL stuff
+                          // the kernal playing a crying fit about non GPL stuff
 MODULE_DESCRIPTION("A Markov device driver.");
 MODULE_AUTHOR("Ben Cartwright-Cox");
 
