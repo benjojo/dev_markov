@@ -31,6 +31,10 @@ int init_module(void) {
     } else {
         printk(KERN_ALERT "mkov module init'd. Insanity loaded into kernel. Good job hero.");
     }
-    
+
     return t;
+}
+
+void cleanup_module(void) {
+    unregister_chrdev(69,"mkov");
 }
