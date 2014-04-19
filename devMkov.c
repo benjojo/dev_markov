@@ -25,7 +25,7 @@ static struct file_operations fops =
 };
 
 int init_module(void) {
-    int t = register_chrdev(69,"mkov",&fops);
+    int t = register_chrdev(89,"mkov",&fops);
     if(t<0) {
         printk(KERN_ALERT "MKOV MODULE COULD NOT INIT AAAAAAAAA");
     } else {
@@ -36,5 +36,5 @@ int init_module(void) {
 }
 
 void cleanup_module(void) {
-    unregister_chrdev(69,"mkov");
+    unregister_chrdev(89,"mkov");
 }
