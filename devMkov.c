@@ -23,3 +23,14 @@ static struct file_operations fops =
     .open = dev_open,
     .release = dev_rls,
 };
+
+int init_module(void) {
+    int t = register_chrdev(69,"mkov",&fops);
+    if(t<0) {
+        printk(KERN_ALERT "MKOV MODULE COULD NOT INIT AAAAAAAAA");
+    } else {
+        printk(KERN_ALERT "mkov module init'd. Insanity loaded into kernel. Good job hero.");
+    }
+    
+    return t;
+}
