@@ -15,3 +15,11 @@ static int dev_rls(struct inode *, struct file *);
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
 static ssize_t dev_write(struct file *, const char *, size_t, loff_t *);
 
+// Adding callbacks into the gig
+static struct file_operations fops =
+{
+    .read = dev_read,
+    .write = dev_write,
+    .open = dev_open,
+    .release = dev_rls,
+};
