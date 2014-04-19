@@ -38,3 +38,19 @@ int init_module(void) {
 void cleanup_module(void) {
     unregister_chrdev(89,"mkov");
 }
+
+static int dev_open(struct inode *inod,struct file *fil) {
+    return 0; // Who actually cares?!
+}
+
+static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
+    return 0; // No read for now just compile pls
+}
+
+static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
+    return 0; // See above
+}
+
+static int dev_rls(struct inode *inod,struct file *fil) {
+    return 0;
+}
