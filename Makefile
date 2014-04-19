@@ -1,4 +1,4 @@
-obj-m = devMkov.o
+obj-m = mkov.o
 
 all:
 		make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
