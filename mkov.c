@@ -10,6 +10,9 @@ MODULE_DESCRIPTION("A Markov device driver.");
 MODULE_AUTHOR("Ben Cartwright-Cox");
 
 
+static char msg[100]={0};
+static short readPos=0;
+
 static int dev_open(struct inode *, struct file *);
 static int dev_rls(struct inode *, struct file *);
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
@@ -44,7 +47,15 @@ static int dev_open(struct inode *inod,struct file *fil) {
 }
 
 static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
-    return 0; // No read for now just compile pls
+    short count = 0;
+    while (len && (msg[readPos]!=0))
+    {
+        put_user(msg[readPos],buff++); //copy byte from kernel space to user space
+        count++;
+        len--;
+        readPos++;
+    }
+    return count;
 }
 
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
