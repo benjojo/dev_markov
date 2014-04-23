@@ -83,6 +83,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                 int i; // C99 mode
                 int j; // C99 mode
             // Then check if the word is in the system already
+                int foundit = 0;
                 for (i = 0; i < 1023; ++i) {
                     int correctwordmaybe = 1;
                     for (j = 0; j < 19; ++j) {
@@ -93,8 +94,22 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     if(correctwordmaybe) {
                         // If it is then increment it.
                         Words[i].times++;
+                        foundit = 1;
                         break;
                     }
+                }
+                if(foundit == 0) {
+                    RollingLimit++;
+                    if(RollingLimit == 1024) {
+                        RollingLimit = 0;
+                    }
+                    
+                    int i;
+                    for (i = 0; i < 19; ++i)
+                    {
+                        Words[RollingLimit].word[i] = msg[i];
+                    }
+                    Words[RollingLimit].times = 0;
                 }
                 // If not add it
             }
