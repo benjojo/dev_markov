@@ -9,10 +9,6 @@ MODULE_LICENSE("Apache"); // Change this to "GPL" if you get annoyed about
 MODULE_DESCRIPTION("A Markov device driver.");
 MODULE_AUTHOR("Ben Cartwright-Cox");
 
-
-static char msg[20]={0};
-static short readPos=0;
-
 static int dev_open(struct inode *, struct file *);
 static int dev_rls(struct inode *, struct file *);
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
@@ -69,10 +65,45 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     return 0;
 }
 
+static char msg[20]={0};
+static int WordSize = 0;
+static short readPos=0;
+
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
 
     while(len > 0) {
         // what you want is in buff[len]
+        char letter = buff[len];
+        if(letter == 0x20) {
+            // Check how much is in the word buffer
+            if(WordSize == 0) {
+                // Then this is useless
+                continue;
+            } else {
+                int i; // C99 mode
+                int j; // C99 mode
+            // Then check if the word is in the system already
+                for (i = 0; i < 1023; ++i)
+                {
+                    int correctwordmaybe = 1;
+                    for (j = 0; j < 19; ++j)
+                    {
+                        if (Words[i].word[j] == msg[j]) {
+                            correctwordmaybe = 0;
+                        }
+                    }
+                    if(correctwordmaybe) {
+                        // If it is then increment it.
+
+                    } else {
+                        // If not add it
+
+                    }
+                }
+            }
+
+            // Then set the latest word var
+        }
         len--;
     }
 
