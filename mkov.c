@@ -74,7 +74,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
     while(len > 0) {
         // what you want is in buff[len]
         char letter = buff[len];
-        if(letter == 0x20) {
+        if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
             if(WordSize == 0) {
                 // Then this is useless
