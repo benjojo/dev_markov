@@ -10,7 +10,7 @@ MODULE_DESCRIPTION("A Markov device driver.");
 MODULE_AUTHOR("Ben Cartwright-Cox");
 
 
-static char msg[100]={0};
+static char msg[20]={0};
 static short readPos=0;
 
 static int dev_open(struct inode *, struct file *);
@@ -32,6 +32,8 @@ static struct MKovEnt
     int times;
     char word[20];
 };
+
+static int RollingLimit = 0;
 
 static struct MKovEnt Words[1024] = {};
 
@@ -68,7 +70,11 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 }
 
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
-    
+
+    while(len > 0) {
+        // what you want is in buff[len]
+        len--;
+    }
 
     return 0; // See above
 
