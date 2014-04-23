@@ -27,13 +27,13 @@ static struct file_operations fops =
     .release = dev_rls,
 };
 
-struct MKovEnt
+static struct MKovEnt
 {
     int times;
-    char word[20]
+    char word[20];
 };
 
-static MKovEnt Words[1024];
+static struct MKovEnt Words[1024] = {};
 
 int init_module(void) {
     int t = register_chrdev(89,"mkov",&fops);
@@ -64,6 +64,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     //     readPos++;
     // }
     // return count;
+    return 0;
 }
 
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
