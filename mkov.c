@@ -83,23 +83,20 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                 int i; // C99 mode
                 int j; // C99 mode
             // Then check if the word is in the system already
-                for (i = 0; i < 1023; ++i)
-                {
+                for (i = 0; i < 1023; ++i) {
                     int correctwordmaybe = 1;
-                    for (j = 0; j < 19; ++j)
-                    {
+                    for (j = 0; j < 19; ++j) {
                         if (Words[i].word[j] == msg[j]) {
                             correctwordmaybe = 0;
                         }
                     }
                     if(correctwordmaybe) {
                         // If it is then increment it.
-
-                    } else {
-                        // If not add it
-
+                        Words[i].times++;
+                        break;
                     }
                 }
+                // If not add it
             }
 
             // Then set the latest word var
