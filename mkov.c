@@ -27,6 +27,14 @@ static struct file_operations fops =
     .release = dev_rls,
 };
 
+struct MKovEnt
+{
+    int times;
+    char word[20]
+};
+
+static MKovEnt Words[1024];
+
 int init_module(void) {
     int t = register_chrdev(89,"mkov",&fops);
     if(t<0) {
@@ -47,19 +55,22 @@ static int dev_open(struct inode *inod,struct file *fil) {
 }
 
 static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
-    short count = 0;
-    while (len && (msg[readPos]!=0))
-    {
-        put_user(msg[readPos],buff++); //copy byte from kernel space to user space
-        count++;
-        len--;
-        readPos++;
-    }
-    return count;
+    // short count = 0;
+    // while (len && (msg[readPos]!=0))
+    // {
+    //     put_user(msg[readPos],buff++); //copy byte from kernel space to user space
+    //     count++;
+    //     len--;
+    //     readPos++;
+    // }
+    // return count;
 }
 
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
+    
+
     return 0; // See above
+
 }
 
 static int dev_rls(struct inode *inod,struct file *fil) {
