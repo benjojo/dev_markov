@@ -93,6 +93,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                         }
                     }
                     if(correctwordmaybe) {
+                        printk(KERN_ALERT "Found that word again...");
                         // If it is then increment it.
                         Words[i].times++;
                         foundit = 1;
@@ -110,12 +111,21 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     {
                         Words[RollingLimit].word[i] = msg[i];
                     }
+                    printk(KERN_ALERT "Added a new word.");
                     Words[RollingLimit].times = 0;
                 }
                 // If not add it
+                WordSize = 0;
             }
 
             // Then set the latest word var
+        } else {
+            if(WordSize != 20) {
+                msg[WordSize] = buff[len];
+                WordSize++;
+            } else {
+                printk(KERN_ALERT "Word 2 big 4 me");
+            }
         }
         len--;
     }
