@@ -70,8 +70,9 @@ static int WordSize = 0;
 static short readPos=0;
 
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
-
+    short bytesprocessed = 0;
     while(len > 0) {
+        bytesprocessed++;
         // what you want is in buff[len]
         char letter = buff[len];
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
@@ -103,7 +104,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     if(RollingLimit == 1024) {
                         RollingLimit = 0;
                     }
-                    
+
                     int i;
                     for (i = 0; i < 19; ++i)
                     {
@@ -119,7 +120,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
         len--;
     }
 
-    return 0; // See above
+    return bytesprocessed;
 
 }
 
