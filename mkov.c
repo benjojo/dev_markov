@@ -27,7 +27,9 @@ static struct MKovEnt
 {
     int times;
     char word[20];
+    int wordlen;
     char lastword[20];
+    int lastwordlen;
 };
 
 static int RollingLimit = 0;
@@ -54,20 +56,22 @@ static int dev_open(struct inode *inod,struct file *fil) {
 }
 
 static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
-    // short count = 0;
-    // while (len && (msg[readPos]!=0))
-    // {
-    //     put_user(msg[readPos],buff++); //copy byte from kernel space to user space
-    //     count++;
-    //     len--;
-    //     readPos++;
-    // }
-    // return count;
+    short count = 0;
+    int max_msg = 512;
+    while (len && (msg[readPos]!=0))
+    {
+        put_user(msg[readPos],buff++); //copy byte from kernel space to user space
+        count++;
+        len--;
+        readPos++;
+    }
+    return count;
     return 0;
 }
 
 static char msg[20]={0};
 static char lastword[20]={0};
+static int lastwordsize = 0;
 static int WordSize = 0;
 static short readPos=0;
 
@@ -112,9 +116,11 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     for (i = 0; i < 19; ++i) {
                         Words[RollingLimit].word[i] = msg[i];
                     }
+                    Words[RollingLimit].wordlen = WordSize;
                     for (i = 0; i < 19; ++i) {
                         Words[RollingLimit].lastword[i] = lastword[i];
                     }
+                    Words[RollingLimit].lastwordlen = lastwordsize;
 
 
                     printk(KERN_ALERT "Added a new word. %s",msg);
@@ -129,6 +135,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
             for (i = 0; i < 19; ++i) {
                 lastword[i] = msg[i];
             }
+            lastwordsize = WordSize;
             
         } else {
             if(WordSize != 20) {
