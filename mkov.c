@@ -66,7 +66,6 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         readPos++;
     }
     return count;
-    return 0;
 }
 
 static char msg[20]={0};
@@ -121,7 +120,6 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                         Words[RollingLimit].lastword[i] = lastword[i];
                     }
                     Words[RollingLimit].lastwordlen = lastwordsize;
-
 
                     printk(KERN_ALERT "Added a new word. %s",msg);
                     Words[RollingLimit].times = 0;
