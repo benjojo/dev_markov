@@ -111,7 +111,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     {
                         Words[RollingLimit].word[i] = msg[i];
                     }
-                    printk(KERN_ALERT "Added a new word.");
+                    printk(KERN_ALERT "Added a new word. %s",msg);
                     Words[RollingLimit].times = 0;
                 }
                 // If not add it
