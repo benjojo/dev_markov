@@ -27,6 +27,7 @@ static struct MKovEnt
 {
     int times;
     char word[20];
+    char lastword[20];
 };
 
 static int RollingLimit = 0;
@@ -66,6 +67,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 }
 
 static char msg[20]={0};
+static char lastword[20]={0};
 static int WordSize = 0;
 static short readPos=0;
 
@@ -107,10 +109,14 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     }
 
                     int i;
-                    for (i = 0; i < 19; ++i)
-                    {
+                    for (i = 0; i < 19; ++i) {
                         Words[RollingLimit].word[i] = msg[i];
                     }
+                    for (i = 0; i < 19; ++i) {
+                        Words[RollingLimit].lastword[i] = lastword[i];
+                    }
+
+
                     printk(KERN_ALERT "Added a new word. %s",msg);
                     Words[RollingLimit].times = 0;
                 }
@@ -119,6 +125,11 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
             }
 
             // Then set the latest word var
+            int i;
+            for (i = 0; i < 19; ++i) {
+                lastword[i] = msg[i];
+            }
+            
         } else {
             if(WordSize != 20) {
                 msg[WordSize] = buff[len];
