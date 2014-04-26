@@ -136,7 +136,9 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                 lastword[i] = msg[i];
             }
             lastwordsize = WordSize;
-            
+            for (i = 0; i < 19; ++i) {
+                msg[i] = 0x00;
+            }
         } else {
             if(WordSize != 20) {
                 msg[WordSize] = buff[index];
