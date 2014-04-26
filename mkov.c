@@ -77,10 +77,11 @@ static int WordSize = 0;
 
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
     short bytesprocessed = 0;
-    while(len > 0) {
+    int index;
+    for (index = 0; i < len; ++i) {
         bytesprocessed++;
-        // what you want is in buff[len]
-        char letter = buff[len];
+        // what you want is in buff[index]
+        char letter = buff[index];
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
             if(WordSize == 0) {
@@ -138,13 +139,12 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
             
         } else {
             if(WordSize != 20) {
-                msg[WordSize] = buff[len];
+                msg[WordSize] = buff[index];
                 WordSize++;
             } else {
                 printk(KERN_ALERT "Word 2 big 4 me");
             }
         }
-        len--;
     }
 
     return bytesprocessed;
