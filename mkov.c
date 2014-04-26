@@ -78,7 +78,7 @@ static int WordSize = 0;
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
     short bytesprocessed = 0;
     int index;
-    for (index = 0; i < len; ++i) {
+    for (index = 0; index < len; ++index) {
         bytesprocessed++;
         // what you want is in buff[index]
         char letter = buff[index];
