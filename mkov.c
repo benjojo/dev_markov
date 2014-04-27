@@ -145,7 +145,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                 WordSize++;
             } else {
                 printk(KERN_ALERT "Word 2 big 4 me");
-                WordSize = 0;
+                // WordSize = 0;
             }
         }
     }
