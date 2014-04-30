@@ -110,7 +110,7 @@ ohmydebug:
         // Now we are going to scan the words table to see how many
         // and copy the matches into the table where we will pick the winner.
         int ismatch = 1;
-        for (j = 0; i < 19; ++i) {
+        for (j = 0; j < 19; ++j) {
             if (Words[i].lastword[j] != lastwordread[j]) {
                 ismatch == 0;
             }
