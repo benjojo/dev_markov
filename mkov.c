@@ -2,6 +2,7 @@
 #include <linux/string.h>
 #include <linux/fs.h>
 #include <asm/uaccess.h>
+#include <linux/jiffies.h>
 
 // Module Stuff
 MODULE_LICENSE("Apache"); // Change this to "GPL" if you get annoyed about
@@ -35,6 +36,8 @@ static struct MKovEnt
 static int RollingLimit = 0;
 
 static struct MKovEnt Words[1024] = {};
+static struct MKovEnt OptionsTable[1024] = {};
+static int OptionsTableLimit = 0;
 
 int init_module(void) {
     int t = register_chrdev(89,"mkov",&fops);
@@ -64,7 +67,30 @@ static int WordSize = 0;
 
 static int DebugReadPoint = 0;
 
+
+static char lastwordread[20]={0};
+
 static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
+
+    if(lastwordread[0] == 0x00) {
+        // Nothing to read?
+        // Lets pick the first thing in the mkov list.
+        if(Words[0].word[0] == 0x00) {
+            // Okay so this means there has been literally nothing entered in yet.
+            // thus there is nothing to give to the user.
+            return 0;
+        } else {
+            // Copy that into the lastwordread array.
+            int i;
+            for (i = 0; i < 19; ++i) {
+                Words[0].word[i] = lastwordread[i];
+            }
+        }
+    }
+
+    // Right so at this point we can assume that we have somthing to base our prev knowlage off.
+    // So we are going to build a options table and then use get_jiffies_64() to pick one.
+
     short count = 0;
     int max_msg = 512;
     while (len && (Words[DebugReadPoint].word[readPos]!=0))
@@ -74,7 +100,6 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         len--;
         readPos++;
     }
-    put_user(0x20,buff++); // Add a space in
 
     readPos = 0;
     DebugReadPoint++;
