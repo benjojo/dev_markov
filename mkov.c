@@ -72,6 +72,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         len--;
         readPos++;
     }
+    readPos = 0;
     return count;
 }
 
