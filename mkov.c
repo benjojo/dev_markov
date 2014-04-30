@@ -87,7 +87,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 // Copy that into the lastwordread array.
                 printk(KERN_ALERT "[Read] There is stuff in there, I will use that as my starting point.");
                 for (i = 0; i < 19; ++i) {
-                    Words[j].word[i] = lastwordread[i];
+                    lastwordread[i] = Words[j].word[i];
                 }
                 break;
             }
