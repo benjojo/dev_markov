@@ -96,12 +96,12 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                 for (i = 0; i < 1023; ++i) {
                     int correctwordmaybe = 1;
                     for (j = 0; j < 19; ++j) {
-                        if (Words[i].word[j] == msg[j]) {
+                        if (Words[i].word[j] != msg[j]) {
                             correctwordmaybe = 0;
                         }
                     }
                     if(correctwordmaybe) {
-                        printk(KERN_ALERT "Found that word again...");
+                        printk(KERN_ALERT "Found that word again... %s", Words[i].word);
                         // If it is then increment it.
                         Words[i].times++;
                         foundit = 1;
