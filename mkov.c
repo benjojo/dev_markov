@@ -71,6 +71,10 @@ static int DebugReadPoint = 0;
 static char lastwordread[20]={0};
 
 static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
+    int i;
+    int j;
+    int matches;
+    int matchlist[1024]={0};
 
     if(lastwordread[0] == 0x00) {
         // Nothing to read?
@@ -81,7 +85,6 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
             return 0;
         } else {
             // Copy that into the lastwordread array.
-            int i;
             for (i = 0; i < 19; ++i) {
                 Words[0].word[i] = lastwordread[i];
             }
@@ -91,21 +94,61 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     // Right so at this point we can assume that we have somthing to base our prev knowlage off.
     // So we are going to build a options table and then use get_jiffies_64() to pick one.
 
-    short count = 0;
-    int max_msg = 512;
-    while (len && (Words[DebugReadPoint].word[readPos]!=0))
-    {
-        put_user(Words[DebugReadPoint].word[readPos],buff++); //copy byte from kernel space to user space
-        count++;
-        len--;
-        readPos++;
+    for (i = 0; i < 1024; ++i) {
+        // Now we are going to scan the words table to see how many
+        // and copy the matches into the table where we will pick the winner.
+        int ismatch = 1;
+        for (j = 0; i < 20; ++i) {
+            if (Words[i].lastword[j] != lastword[j]) {
+                ismatch == 0;
+            }
+        }
+        if(ismatch) {
+            // oh neat this one could work for us!
+            matchlist[matches] = i;
+            matches++;
+        }
     }
 
-    readPos = 0;
-    DebugReadPoint++;
-    if(DebugReadPoint == 1024) {
-        DebugReadPoint = 0;
+
+    if(matches == 0) {
+        return 0;
     }
+
+    int totalprobcount = 0;
+
+    for (i = 0; i < matches; ++i) {
+        totalprobcount += words[matchlist[i]].times;
+    }
+
+    int target = get_jiffies_64() % totalprobcount; // Good lord what have I done.
+
+    short count = 0;
+    for (i = 0; i < matches; ++i) {
+        target = target - words[matchlist[i]].times;
+        if(target < 0) {
+            // WE HAVE GOT IT LADIES AND GENTLEMEN.
+            while (len && (Words[i].word[readPos]!=0))
+            {
+                put_user(Words[i].word[readPos],buff++); //copy byte from kernel space to user space
+                count++;
+                len--;
+                readPos++;
+            }
+        }
+    }
+
+    // while (len && (Words[DebugReadPoint].word[readPos]!=0))
+    // {
+    //     put_user(Words[DebugReadPoint].word[readPos],buff++); //copy byte from kernel space to user space
+    //     count++;
+    //     len--;
+    //     readPos++;
+    // }
+    if(count != 0) {
+        put_user(0x20,buff++); // " "
+    }
+    readPos = 0;
     return count+1;
 }
 
