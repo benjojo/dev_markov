@@ -130,8 +130,10 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     for (i = 0; i < matches; ++i) {
         totalprobcount += Words[matchlist[i]].times;
     }
-
+    
+    printk(KERN_ALERT "[Read] So explode maybe?");
     int target = get_jiffies_64() % totalprobcount; // Good lord what have I done.
+    printk(KERN_ALERT "[Read] Na not that.");
 
     short count = 0;
     for (i = 0; i < matches; ++i) {
