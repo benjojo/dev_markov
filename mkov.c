@@ -77,23 +77,29 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     int matchlist[1024]={0};
 
     if(lastwordread[0] == 0x00) {
-        printk(KERN_ALERT "[Read] I've got nothing to read. I wonder whats in the first word");
+        printk(KERN_ALERT "[Read] I've got nothing to read. Scanning for words in the table");
         // Nothing to read?
         // Lets pick the first thing in the mkov list.
-        if(Words[0].word[0] == 0x00) {
-            printk(KERN_ALERT "[Read] Nothing. I'm going to bugger off then.");
-            // Okay so this means there has been literally nothing entered in yet.
-            // thus there is nothing to give to the user.
-            return 0;
-        } else {
-            // Copy that into the lastwordread array.
-            printk(KERN_ALERT "[Read] There is stuff in there, I will use that as my starting point.");
-            for (i = 0; i < 19; ++i) {
-                Words[0].word[i] = lastwordread[i];
+        for (j = 0; j < count; ++j) {
+            if(Words[j].word[0] == 0x00) {
+
+            } else {
+                // Copy that into the lastwordread array.
+                printk(KERN_ALERT "[Read] There is stuff in there, I will use that as my starting point.");
+                for (i = 0; i < 19; ++i) {
+                    Words[j].word[i] = lastwordread[i];
+                }
+                break;
             }
         }
-    }
 
+    }
+    if(lastwordread[0] == 0x00) {
+        printk(KERN_ALERT "[Read] Nothing. I'm going to bugger off then.");
+        // Okay so this means there has been literally nothing entered in yet.
+        // thus there is nothing to give to the user.
+        return 0;
+    }
     // Right so at this point we can assume that we have somthing to base our prev knowlage off.
     // So we are going to build a options table and then use get_jiffies_64() to pick one.
 
