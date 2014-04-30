@@ -1,4 +1,6 @@
 #!/bin/bash
+make clean
+make
 rmmod mkov
 insmod mkov.ko
 mknod /dev/mkov c 89 1
