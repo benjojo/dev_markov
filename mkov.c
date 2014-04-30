@@ -77,14 +77,17 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     int matchlist[1024]={0};
 
     if(lastwordread[0] == 0x00) {
+        printk(KERN_ALERT "[Read] I've got nothing to read. I wonder whats in the first word");
         // Nothing to read?
         // Lets pick the first thing in the mkov list.
         if(Words[0].word[0] == 0x00) {
+            printk(KERN_ALERT "[Read] Nothing. I'm going to bugger off then.");
             // Okay so this means there has been literally nothing entered in yet.
             // thus there is nothing to give to the user.
             return 0;
         } else {
             // Copy that into the lastwordread array.
+            printk(KERN_ALERT "[Read] There is stuff in there, I will use that as my starting point.");
             for (i = 0; i < 19; ++i) {
                 Words[0].word[i] = lastwordread[i];
             }
@@ -112,6 +115,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 
 
     if(matches == 0) {
+        printk(KERN_ALERT "[Read] No matches to word found. abort.");
         return 0;
     }
 
@@ -138,13 +142,6 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         }
     }
 
-    // while (len && (Words[DebugReadPoint].word[readPos]!=0))
-    // {
-    //     put_user(Words[DebugReadPoint].word[readPos],buff++); //copy byte from kernel space to user space
-    //     count++;
-    //     len--;
-    //     readPos++;
-    // }
     if(count != 0) {
         put_user(0x20,buff++); // " "
     }
