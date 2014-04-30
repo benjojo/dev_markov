@@ -62,17 +62,25 @@ static char lastword[20]={0};
 static int lastwordsize = 0;
 static int WordSize = 0;
 
+static int DebugReadPoint = 0;
+
 static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     short count = 0;
     int max_msg = 512;
-    while (len && (lastword[readPos]!=0))
+    while (len && (Words[DebugReadPoint].word[readPos]!=0))
     {
-        put_user(lastword[readPos],buff++); //copy byte from kernel space to user space
+        put_user(Words[DebugReadPoint].word[readPos],buff++); //copy byte from kernel space to user space
         count++;
         len--;
         readPos++;
     }
+    put_user(0x20,buff++); // Add a space in
+
     readPos = 0;
+    DebugReadPoint++;
+    if(DebugReadPoint == 1024) {
+        DebugReadPoint = 0;
+    }
     return count;
 }
 
