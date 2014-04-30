@@ -118,14 +118,14 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     int totalprobcount = 0;
 
     for (i = 0; i < matches; ++i) {
-        totalprobcount += words[matchlist[i]].times;
+        totalprobcount += Words[matchlist[i]].times;
     }
 
     int target = get_jiffies_64() % totalprobcount; // Good lord what have I done.
 
     short count = 0;
     for (i = 0; i < matches; ++i) {
-        target = target - words[matchlist[i]].times;
+        target = target - Words[matchlist[i]].times;
         if(target < 0) {
             // WE HAVE GOT IT LADIES AND GENTLEMEN.
             while (len && (Words[i].word[readPos]!=0))
