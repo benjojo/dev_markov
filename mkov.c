@@ -80,7 +80,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         printk(KERN_ALERT "[Read] I've got nothing to read. Scanning for words in the table");
         // Nothing to read?
         // Lets pick the first thing in the mkov list.
-        for (j = 0; j < count; ++j) {
+        for (j = 0; j < 1024; ++j) {
             if(Words[j].word[0] == 0x00) {
 
             } else {
