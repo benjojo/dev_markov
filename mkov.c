@@ -81,7 +81,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     if(DebugReadPoint == 1024) {
         DebugReadPoint = 0;
     }
-    return count;
+    return count+1;
 }
 
 static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *off) {
