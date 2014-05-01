@@ -36,8 +36,7 @@ static struct MKovEnt
 static int RollingLimit = 0;
 
 static struct MKovEnt Words[1024] = {};
-static struct MKovEnt OptionsTable[1024] = {};
-static int OptionsTableLimit = 0;
+
 
 int init_module(void) {
     int t = register_chrdev(89,"mkov",&fops);
@@ -229,9 +228,6 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
             if(WordSize != 20) {
                 msg[WordSize] = buff[index];
                 WordSize++;
-            } else {
-                printk(KERN_ALERT "Word 2 big 4 me");
-                // WordSize = 0;
             }
         }
     }
