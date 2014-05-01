@@ -188,7 +188,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                         }
                     }
                     if(correctwordmaybe) {
-                        printk(KERN_ALERT "Found that word again... %s", Words[i].word);
+                        printk(KERN_ALERT "Found that word again... %s->%s",lastword, Words[i].word);
                         // If it is then increment it.
                         Words[i].times++;
                         foundit = 1;
@@ -211,7 +211,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     }
                     Words[rollingLimit].lastwordlen = lastwordsize;
 
-                    printk(KERN_ALERT "Added a new word. %s",msg);
+                    printk(KERN_ALERT "Added a new word. %s->%s",lastword,msg);
                     Words[rollingLimit].times = 0;
                 }
                 // If not add it
