@@ -112,22 +112,24 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 ismatch = 0;
             }
         }
-        int isrepeat = 1;
-        for (j = 0; j < 19; ++j) {
-            if (Words[i].word[j] != lastwordread[j]) {
-                isrepeat = 0;
+        if(ismatch) {
+            int isrepeat = 1;
+            for (j = 0; j < 19; ++j) {
+                if (Words[i].word[j] != lastwordread[j]) {
+                    isrepeat = 0;
+                }
+            }
+
+            if(isrepeat == 0) {
+                printk(KERN_ALERT "[Read] Adding %s -> %s as a candidate for the next word",lastwordread,Words[i].word);
+
+                matchlist[matches] = i;
+                matches++;
+            } else {
+                printk(KERN_ALERT "[Read] wtf %s -> %s",Words[i].word,lastwordread);
             }
         }
 
-        if(ismatch && isrepeat) {
-            printk(KERN_ALERT "[Read] wtf %s -> %s",Words[i].word,lastwordread);
-        }
-
-        if(ismatch && !isrepeat) {
-            // oh neat this one could work for us!
-            matchlist[matches] = i;
-            matches++;
-        }
     }
 
 
