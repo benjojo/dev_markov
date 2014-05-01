@@ -112,7 +112,14 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 ismatch == 0;
             }
         }
-        if(ismatch) {
+        int isrepeat = 1;
+        for (j = 0; j < 19; ++j) {
+            if (Words[i].word[j] != lastwordread[j]) {
+                isrepeat == 0;
+            }
+        }
+        
+        if(ismatch && !isrepeat) {
             // oh neat this one could work for us!
             matchlist[matches] = i;
             matches++;
