@@ -33,7 +33,7 @@ static struct MKovEnt
     int lastwordlen;
 };
 
-static int RollingLimit = 0;
+static int rollingLimit = 0;
 
 static struct MKovEnt Words[1024] = {};
 
@@ -62,7 +62,7 @@ static short readPos=0;
 
 static char lastword[20]={0};
 static int lastwordsize = 0;
-static int WordSize = 0;
+static int wordSize = 0;
 
 static int DebugReadPoint = 0;
 
@@ -169,7 +169,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
         char letter = buff[index];
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
-            if(WordSize == 0) {
+            if(wordSize == 0) {
                 // Then this is useless
                 continue;
             } else {
@@ -193,26 +193,26 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     }
                 }
                 if(foundit == 0) {
-                    RollingLimit++;
-                    if(RollingLimit == 1024) {
-                        RollingLimit = 0;
+                    rollingLimit++;
+                    if(rollingLimit == 1024) {
+                        rollingLimit = 0;
                     }
 
                     int i;
                     for (i = 0; i < 19; ++i) {
-                        Words[RollingLimit].word[i] = msg[i];
+                        Words[rollingLimit].word[i] = msg[i];
                     }
-                    Words[RollingLimit].wordlen = WordSize;
+                    Words[rollingLimit].wordlen = wordSize;
                     for (i = 0; i < 19; ++i) {
-                        Words[RollingLimit].lastword[i] = lastword[i];
+                        Words[rollingLimit].lastword[i] = lastword[i];
                     }
-                    Words[RollingLimit].lastwordlen = lastwordsize;
+                    Words[rollingLimit].lastwordlen = lastwordsize;
 
                     printk(KERN_ALERT "Added a new word. %s",msg);
-                    Words[RollingLimit].times = 0;
+                    Words[rollingLimit].times = 0;
                 }
                 // If not add it
-                WordSize = 0;
+                wordSize = 0;
             }
 
             // Then set the latest word var
@@ -220,14 +220,14 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
             for (i = 0; i < 19; ++i) {
                 lastword[i] = msg[i];
             }
-            lastwordsize = WordSize;
+            lastwordsize = wordSize;
             for (i = 0; i < 19; ++i) {
                 msg[i] = 0x00;
             }
         } else {
-            if(WordSize != 20) {
-                msg[WordSize] = buff[index];
-                WordSize++;
+            if(wordSize != 20) {
+                msg[wordSize] = buff[index];
+                wordSize++;
             }
         }
     }
