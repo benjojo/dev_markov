@@ -74,7 +74,6 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     int j = 0;
     int matches = 0;
     int matchlist[1024]={0};
-printk(KERN_ALERT "[Read] TAG TAG 1");
 
     if(lastwordread[0] == 0x00) {
         printk(KERN_ALERT "[Read] I've got nothing to read. Scanning for words in the table");
@@ -94,7 +93,6 @@ printk(KERN_ALERT "[Read] TAG TAG 1");
         }
     }
 
-printk(KERN_ALERT "[Read] TAG TAG 2");
 
     if(lastwordread[0] == 0x00) {
         printk(KERN_ALERT "[Read] There is nothing to start from. Not going to give anything.");
@@ -104,7 +102,6 @@ printk(KERN_ALERT "[Read] TAG TAG 2");
     }
     // Right so at this point we can assume that we have somthing to base our prev knowlage off.
     // So we are going to build a options table and then use get_jiffies_64() to pick one.
-printk(KERN_ALERT "[Read] TAG TAG 3");
 
     for (i = 0; i < 1024; ++i) {
         // Now we are going to scan the words table to see how many
@@ -132,7 +129,6 @@ printk(KERN_ALERT "[Read] TAG TAG 3");
             matches++;
         }
     }
-printk(KERN_ALERT "[Read] TAG TAG 4");
 
 
     if(matches == 0) {
@@ -171,49 +167,36 @@ printk(KERN_ALERT "[Read] TAG TAG 4");
 
         return 0;
     }
-printk(KERN_ALERT "[Read] TAG TAG 5");
 
     int totalprobcount = 0;
 
     for (i = 0; i < matches; ++i) {
         totalprobcount += Words[matchlist[i]].times;
     }
-    printk(KERN_ALERT "[Read] TAG TAG 6~");
 
     int target = get_jiffies_64() % totalprobcount; // Good lord what have I done.
-            printk(KERN_ALERT "[Read] TAG TAG 6.01");
     short count = 0;
     for (i = 0; i < matches; ++i) {
-            printk(KERN_ALERT "[Read] TAG TAG 6.02");
-
         target = target - Words[matchlist[i]].times;
-            printk(KERN_ALERT "[Read] TAG TAG 6.1");
 
         if(target < 0) {
             // WE HAVE GOT IT LADIES AND GENTLEMEN.
-            for (j = 0; j < count; ++j) {
+            for (j = 0; j < 19; ++j) {
                 lastwordread[j] = 0x00;
             }
-                        printk(KERN_ALERT "[Read] TAG TAG 6.2");
 
             while (len && (Words[i].word[readPos]!=0))
             {
-                        printk(KERN_ALERT "[Read] TAG TAG 6.3");
-
                 put_user(Words[i].word[readPos],buff++); //copy byte from kernel space to user space
                 lastwordread[readPos] = Words[i].word[readPos];
                 count++;
                 len--;
                 readPos++;
             }
-                        printk(KERN_ALERT "[Read] TAG TAG 6.4");
-
             break;
         }
-                        printk(KERN_ALERT "[Read] TAG TAG 6.5");
 
     }
-printk(KERN_ALERT "[Read] TAG TAG 7");
 
     if(count != 0) {
         put_user(0x20,buff++); // " "
