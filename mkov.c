@@ -85,20 +85,18 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 
             } else {
                 // Copy that into the lastwordread array.
-                printk(KERN_ALERT "[Read] There is stuff in there, I will use that as my starting point.");
+                printk(KERN_ALERT "[Read] I will use %s as my starting point.", Words[j].word);
                 for (i = 0; i < 19; ++i) {
-                    printk(KERN_ALERT "[Read] Copying Words[%d].word[%d] -> lastwordread[%d]",j,i,i);
                     lastwordread[i] = Words[j].word[i];
                 }
-                goto ohmydebug;
+                break;
             }
         }
     }
 
-ohmydebug:
 
     if(lastwordread[0] == 0x00) {
-        printk(KERN_ALERT "[Read] Nothing. I'm going to bugger off then.");
+        printk(KERN_ALERT "[Read] There is nothing to start from. Not going to give anything.");
         // Okay so this means there has been literally nothing entered in yet.
         // thus there is nothing to give to the user.
         return 0;
@@ -134,27 +132,20 @@ ohmydebug:
         totalprobcount += Words[matchlist[i]].times;
     }
     
-    printk(KERN_ALERT "[Read] So explode maybe?");
     int target = get_jiffies_64() % totalprobcount; // Good lord what have I done.
-    printk(KERN_ALERT "[Read] Na not that.");
-
-    printk(KERN_ALERT "[Read] So explode maybe? 138");
+ 
     short count = 0;
     for (i = 0; i < matches; ++i) {
-        printk(KERN_ALERT "[Read] So explode maybe? 141");
         target = target - Words[matchlist[i]].times;
         if(target < 0) {
-            printk(KERN_ALERT "[Read] So explode maybe? 144");
             // WE HAVE GOT IT LADIES AND GENTLEMEN.
             for (j = 0; j < count; ++j) {
                 lastwordread[j] = 0x00;
             }
             while (len && (Words[i].word[readPos]!=0))
             {
-                printk(KERN_ALERT "[Read] So explode maybe? 148");
                 put_user(Words[i].word[readPos],buff++); //copy byte from kernel space to user space
                 lastwordread[readPos] = Words[i].word[readPos];
-                printk(KERN_ALERT "[Read] So explode maybe? 150");
                 count++;
                 len--;
                 readPos++;
@@ -163,12 +154,10 @@ ohmydebug:
         }
     }
 
-    printk(KERN_ALERT "[Read] So explode maybe? 158");
     if(count != 0) {
         put_user(0x20,buff++); // " "
     }
     readPos = 0;
-    printk(KERN_ALERT "[Read] So explode maybe? 163");
     return count+1;
 }
 
