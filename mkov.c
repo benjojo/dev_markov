@@ -118,7 +118,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 isrepeat == 0;
             }
         }
-        
+
         if(ismatch && !isrepeat) {
             // oh neat this one could work for us!
             matchlist[matches] = i;
@@ -129,6 +129,17 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 
     if(matches == 0) {
         printk(KERN_ALERT "[Read] No matches to word found. abort.");
+        // So I am now going to copy a random work (provided there is one in there) to the 
+        // lastwordread array. to spice things up a tad.
+
+        while(lastwordread[0] != 0x00) {
+            int pick = get_jiffies_64() % 1023;
+            for (i = 0; i < 20; ++i) {
+                lastwordread[i] = Words[pick].word[i];
+            }
+        }
+
+
         return 0;
     }
 
