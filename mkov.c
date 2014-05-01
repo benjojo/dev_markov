@@ -35,7 +35,7 @@ static struct MKovEnt
 
 static int rollingLimit = 0;
 
-static struct MKovEnt Words[1024] = {};
+static struct MKovEnt words[1024] = {};
 
 
 int init_module(void) {
@@ -62,7 +62,7 @@ static short readPos=0;
 
 static char lastword[20]={0};
 static int lastwordsize = 0;
-static int wordSize = 0;
+static int wordsize = 0;
 
 static char lastwordread[20]={0};
 
@@ -77,13 +77,13 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         // Nothing to read?
         // Lets pick the first thing in the mkov list.
         for (j = 0; j < 1024; ++j) {
-            if(Words[j].word[0] == 0x00) {
+            if(words[j].word[0] == 0x00) {
 
             } else {
                 // Copy that into the lastwordread array.
-                printk(KERN_ALERT "[Read] I will use %s as my starting point.", Words[j].word);
+                printk(KERN_ALERT "[Read] I will use %s as my starting point.", words[j].word);
                 for (i = 0; i < 19; ++i) {
-                    lastwordread[i] = Words[j].word[i];
+                    lastwordread[i] = words[j].word[i];
                 }
                 break;
             }
@@ -105,14 +105,14 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         // and copy the matches into the table where we will pick the winner.
         int ismatch = 1;
         for (j = 0; j < 19; ++j) {
-            if (Words[i].lastword[j] != lastwordread[j]) {
+            if (words[i].lastword[j] != lastwordread[j]) {
                 ismatch = 0;
             }
         }
         if(ismatch) {
             int isrepeat = 1;
             for (j = 0; j < 19; ++j) {
-                if (Words[i].word[j] != lastwordread[j]) {
+                if (words[i].word[j] != lastwordread[j]) {
                     isrepeat = 0;
                 }
             }
@@ -121,7 +121,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 matchlist[matches] = i;
                 matches++;
             } else {
-                printk(KERN_ALERT "[Read] wtf %s -> %s",Words[i].word,lastwordread);
+                printk(KERN_ALERT "[Read] wtf %s -> %s",words[i].word,lastwordread);
             }
         }
 
@@ -143,13 +143,13 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         while(lastwordread[0] == 0x00) {
             int pick = pickR % 1023;
             printk(KERN_ALERT "[Read] Pick %d",pick);
-            if(Words[pick].word[0] != 0x00) {
+            if(words[pick].word[0] != 0x00) {
                 for (i = 0; i < 19; ++i) {
                     lastwordread[i] = 0x00;
                 }
-                printk(KERN_ALERT "[Read] Why not use %s for the next word? Pick %d",Words[pick].word,pick);
+                printk(KERN_ALERT "[Read] Why not use %s for the next word? Pick %d",words[pick].word,pick);
                 for (i = 0; i < 19; ++i) {
-                    lastwordread[i] = Words[pick].word[i];
+                    lastwordread[i] = words[pick].word[i];
                 }
                 
             }
@@ -168,13 +168,13 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
     int totalprobcount = 0;
 
     for (i = 0; i < matches; ++i) {
-        totalprobcount += Words[matchlist[i]].times;
+        totalprobcount += words[matchlist[i]].times;
     }
 
     int target = get_jiffies_64() % totalprobcount; // Good lord what have I done.
     short count = 0;
     for (i = 0; i < matches; ++i) {
-        target = target - Words[matchlist[i]].times;
+        target = target - words[matchlist[i]].times;
 
         if(target < 0) {
             // WE HAVE GOT IT LADIES AND GENTLEMEN.
@@ -182,10 +182,10 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 lastwordread[j] = 0x00;
             }
 
-            while (len && (Words[matchlist[i]].word[readPos]!=0))
+            while (len && (words[matchlist[i]].word[readPos]!=0))
             {
-                put_user(Words[matchlist[i]].word[readPos],buff++); //copy byte from kernel space to user space
-                lastwordread[readPos] = Words[matchlist[i]].word[readPos];
+                put_user(words[matchlist[i]].word[readPos],buff++); //copy byte from kernel space to user space
+                lastwordread[readPos] = words[matchlist[i]].word[readPos];
                 count++;
                 len--;
                 readPos++;
@@ -211,7 +211,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
         char letter = buff[index];
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
-            if(wordSize == 0) {
+            if(wordsize == 0) {
                 // Then this is useless
                 continue;
             } else {
@@ -222,17 +222,17 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                 for (i = 0; i < 1023; ++i) {
                     int correctwordmaybe = 1;
                     for (j = 0; j < 19; ++j) {
-                        if (Words[i].word[j] != msg[j]) {
+                        if (words[i].word[j] != msg[j]) {
                             correctwordmaybe = 0;
                         }
-                        if (Words[i].lastword[j] != lastword[j]) {
+                        if (words[i].lastword[j] != lastword[j]) {
                             correctwordmaybe = 0;
                         }
                     }
                     if(correctwordmaybe) {
-                        printk(KERN_ALERT "Found that word again... %s->%s",lastword, Words[i].word);
+                        printk(KERN_ALERT "Found that word again... %s->%s",lastword, words[i].word);
                         // If it is then increment it.
-                        Words[i].times++;
+                        words[i].times++;
                         foundit = 1;
                         break;
                     }
@@ -245,19 +245,19 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
 
                     int i;
                     for (i = 0; i < 19; ++i) {
-                        Words[rollingLimit].word[i] = msg[i];
+                        words[rollingLimit].word[i] = msg[i];
                     }
-                    Words[rollingLimit].wordlen = wordSize;
+                    words[rollingLimit].wordlen = wordsize;
                     for (i = 0; i < 19; ++i) {
-                        Words[rollingLimit].lastword[i] = lastword[i];
+                        words[rollingLimit].lastword[i] = lastword[i];
                     }
-                    Words[rollingLimit].lastwordlen = lastwordsize;
+                    words[rollingLimit].lastwordlen = lastwordsize;
 
                     printk(KERN_ALERT "Added a new word. %s->%s",lastword,msg);
-                    Words[rollingLimit].times = 1;
+                    words[rollingLimit].times = 1;
                 }
                 // If not add it
-                wordSize = 0;
+                wordsize = 0;
             }
 
             // Then set the latest word var
@@ -265,14 +265,14 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
             for (i = 0; i < 19; ++i) {
                 lastword[i] = msg[i];
             }
-            lastwordsize = wordSize;
+            lastwordsize = wordsize;
             for (i = 0; i < 19; ++i) {
                 msg[i] = 0x00;
             }
         } else {
-            if(wordSize != 20) {
-                msg[wordSize] = buff[index];
-                wordSize++;
+            if(wordsize != 20) {
+                msg[wordsize] = buff[index];
+                wordsize++;
             }
         }
     }
