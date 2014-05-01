@@ -187,10 +187,10 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 lastwordread[j] = 0x00;
             }
 
-            while (len && (Words[i].word[readPos]!=0))
+            while (len && (Words[matchlist[i]].word[readPos]!=0))
             {
-                put_user(Words[i].word[readPos],buff++); //copy byte from kernel space to user space
-                lastwordread[readPos] = Words[i].word[readPos];
+                put_user(Words[matchlist[i]].word[readPos],buff++); //copy byte from kernel space to user space
+                lastwordread[readPos] = Words[matchlist[i]].word[readPos];
                 count++;
                 len--;
                 readPos++;
