@@ -183,6 +183,9 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                         if (Words[i].word[j] != msg[j]) {
                             correctwordmaybe = 0;
                         }
+                        if (Words[i].lastword[j] != lastword[j]) {
+                            correctwordmaybe = 0;
+                        }
                     }
                     if(correctwordmaybe) {
                         printk(KERN_ALERT "Found that word again... %s", Words[i].word);
@@ -192,7 +195,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                         break;
                     }
                 }
-                if(foundit == 0) {
+                if(foundit == 0) { 
                     rollingLimit++;
                     if(rollingLimit == 1024) {
                         rollingLimit = 0;
