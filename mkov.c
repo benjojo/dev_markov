@@ -64,9 +64,6 @@ static char lastword[20]={0};
 static int lastwordsize = 0;
 static int wordSize = 0;
 
-static int DebugReadPoint = 0;
-
-
 static char lastwordread[20]={0};
 
 static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
@@ -121,8 +118,6 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
             }
 
             if(isrepeat == 0) {
-                printk(KERN_ALERT "[Read] Adding %s -> %s as a candidate for the next word",lastwordread,Words[i].word);
-
                 matchlist[matches] = i;
                 matches++;
             } else {
