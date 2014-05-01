@@ -132,11 +132,14 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         // So I am now going to copy a random work (provided there is one in there) to the 
         // lastwordread array. to spice things up a tad.
 
+        int pickR = get_jiffies_64();
+
         while(lastwordread[0] != 0x00) {
-            int pick = get_jiffies_64() % 1023;
+            int pick = pickR % 1023;
             for (i = 0; i < 20; ++i) {
                 lastwordread[i] = Words[pick].word[i];
             }
+            pickR++;
         }
 
 
