@@ -62,7 +62,7 @@ static short readPos=0;
 
 static char lastword[20]={0};
 static int lastwordsize = 0;
-static int wordsize = 0;
+static int wordSize = 0;
 
 static char lastwordread[20]={0};
 
@@ -82,9 +82,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
             } else {
                 // Copy that into the lastwordread array.
                 printk(KERN_ALERT "[Read] I will use %s as my starting point.", words[j].word);
-                for (i = 0; i < 19; ++i) {
-                    lastwordread[i] = words[j].word[i];
-                }
+                memcpy(lastwordread, words[j].word, 20);
                 break;
             }
         }
@@ -118,6 +116,8 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
             }
 
             if(isrepeat == 0) {
+                printk(KERN_ALERT "[Read] Adding %s -> %s as a candidate for the next word",lastwordread,words[i].word);
+
                 matchlist[matches] = i;
                 matches++;
             } else {
@@ -134,9 +134,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         // lastwordread array. to spice things up a tad.
         int pickR = get_jiffies_64();
 
-        for (i = 0; i < 19; ++i) {
-            lastwordread[i] = 0x00;
-        }
+        memset(lastwordread,0x00,20);
 
         int attempts = 0;
 
@@ -144,13 +142,12 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
             int pick = pickR % 1023;
             printk(KERN_ALERT "[Read] Pick %d",pick);
             if(words[pick].word[0] != 0x00) {
-                for (i = 0; i < 19; ++i) {
-                    lastwordread[i] = 0x00;
-                }
+
+                memset(lastwordread,0x00,20);
+
                 printk(KERN_ALERT "[Read] Why not use %s for the next word? Pick %d",words[pick].word,pick);
-                for (i = 0; i < 19; ++i) {
-                    lastwordread[i] = words[pick].word[i];
-                }
+                
+                memcpy(lastwordread,words[pick].word,20);
                 
             }
             pickR++;
@@ -178,14 +175,12 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 
         if(target < 0) {
             // WE HAVE GOT IT LADIES AND GENTLEMEN.
-            for (j = 0; j < 19; ++j) {
-                lastwordread[j] = 0x00;
-            }
+            memset(lastwordread, 0x00, 20);
+            memcpy(lastwordread, words[matchlist[i]].word, 20);
 
             while (len && (words[matchlist[i]].word[readPos]!=0))
             {
                 put_user(words[matchlist[i]].word[readPos],buff++); //copy byte from kernel space to user space
-                lastwordread[readPos] = words[matchlist[i]].word[readPos];
                 count++;
                 len--;
                 readPos++;
@@ -211,7 +206,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
         char letter = buff[index];
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
-            if(wordsize == 0) {
+            if(wordSize == 0) {
                 // Then this is useless
                 continue;
             } else {
@@ -243,36 +238,29 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                         rollingLimit = 0;
                     }
 
-                    int i;
-                    for (i = 0; i < 19; ++i) {
-                        words[rollingLimit].word[i] = msg[i];
-                    }
-                    words[rollingLimit].wordlen = wordsize;
-                    for (i = 0; i < 19; ++i) {
-                        words[rollingLimit].lastword[i] = lastword[i];
-                    }
+                    memcpy(words[rollingLimit].word, msg, 20);
+
+                    words[rollingLimit].wordlen = wordSize;
+
+                    memcpy(words[rollingLimit].lastword, lastword, 20);
                     words[rollingLimit].lastwordlen = lastwordsize;
 
                     printk(KERN_ALERT "Added a new word. %s->%s",lastword,msg);
                     words[rollingLimit].times = 1;
                 }
                 // If not add it
-                wordsize = 0;
+                wordSize = 0;
             }
 
             // Then set the latest word var
-            int i;
-            for (i = 0; i < 19; ++i) {
-                lastword[i] = msg[i];
-            }
-            lastwordsize = wordsize;
-            for (i = 0; i < 19; ++i) {
-                msg[i] = 0x00;
-            }
+            memcpy(lastword, msg, 20);
+            lastwordsize = wordSize;
+            memset(msg,0x00,20);
+
         } else {
-            if(wordsize != 20) {
-                msg[wordsize] = buff[index];
-                wordsize++;
+            if(wordSize != 20) {
+                msg[wordSize] = buff[index];
+                wordSize++;
             }
         }
     }
