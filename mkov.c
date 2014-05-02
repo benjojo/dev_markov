@@ -54,7 +54,7 @@ void cleanup_module(void) {
 }
 
 static int dev_open(struct inode *inod,struct file *fil) {
-    return 0; // Who actually cares?!
+    return 0; // We have loaded
 }
 
 static char msg[20]={0};
@@ -130,8 +130,8 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 
     if(matches == 0) {
         printk(KERN_ALERT "[Read] No matches to word found. abort.");
-        // So I am now going to copy a random work (provided there is one in there) to the 
-        // lastwordread array. to spice things up a tad.
+        // So I am now going to copy a random word (provided there is one in there) to the 
+        // lastwordread array.
         int pickR = get_jiffies_64();
 
         for (i = 0; i < 19; ++i) {
@@ -177,7 +177,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         target = target - words[matchlist[i]].times;
 
         if(target < 0) {
-            // WE HAVE GOT IT LADIES AND GENTLEMEN.
+            // We have got a word
             for (j = 0; j < 19; ++j) {
                 lastwordread[j] = 0x00;
             }
@@ -212,7 +212,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
             if(wordsize == 0) {
-                // Then this is useless
+                // If the word is zero, it's useless.
                 continue;
             } else {
                 int i; // C99 mode
