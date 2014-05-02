@@ -62,7 +62,7 @@ static short readPos=0;
 
 static char lastword[20]={0};
 static int lastwordsize = 0;
-static int wordSize = 0;
+static int wordsize = 0;
 
 static char lastwordread[20]={0};
 
@@ -206,7 +206,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
         char letter = buff[index];
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
-            if(wordSize == 0) {
+            if(wordsize == 0) {
                 // Then this is useless
                 continue;
             } else {
@@ -240,7 +240,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
 
                     memcpy(words[rollingLimit].word, msg, 20);
 
-                    words[rollingLimit].wordlen = wordSize;
+                    words[rollingLimit].wordlen = wordsize;
 
                     memcpy(words[rollingLimit].lastword, lastword, 20);
                     words[rollingLimit].lastwordlen = lastwordsize;
@@ -249,18 +249,18 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
                     words[rollingLimit].times = 1;
                 }
                 // If not add it
-                wordSize = 0;
+                wordsize = 0;
             }
 
             // Then set the latest word var
             memcpy(lastword, msg, 20);
-            lastwordsize = wordSize;
+            lastwordsize = wordsize;
             memset(msg,0x00,20);
 
         } else {
-            if(wordSize != 20) {
-                msg[wordSize] = buff[index];
-                wordSize++;
+            if(wordsize != 20) {
+                msg[wordsize] = buff[index];
+                wordsize++;
             }
         }
     }
