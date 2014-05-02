@@ -41,9 +41,9 @@ static struct MKovEnt words[1024] = {};
 int init_module(void) {
     int t = register_chrdev(89,"mkov",&fops);
     if(t<0) {
-        printk(KERN_ALERT "MKOV MODULE COULD NOT INIT AAAAAAAAA");
+        printk(KERN_ALERT "Markov module could not initalize.");
     } else {
-        printk(KERN_ALERT "mkov module init'd. Insanity loaded into kernel. Good job hero.");
+        printk(KERN_ALERT "Markov module initalized.");
     }
 
     return t;
@@ -121,7 +121,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 matchlist[matches] = i;
                 matches++;
             } else {
-                printk(KERN_ALERT "[Read] wtf %s -> %s",words[i].word,lastwordread);
+                printk(KERN_ALERT "[Read] Something happened %s -> %s",words[i].word,lastwordread);
             }
         }
 
