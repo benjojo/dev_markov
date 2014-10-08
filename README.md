@@ -3,7 +3,7 @@ dev_markov
 
 A Linux /dev/markov (Silly project)
 
-![](http://daring.benjojo.co.uk/DataStore/tmp/mkov3.gif)
+![](http://aura.benjojo.co.uk/DataStore/tmp/mkov3.gif)
 
 Install stuff I have done so far:
 
