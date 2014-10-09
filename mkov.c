@@ -41,9 +41,9 @@ static struct MKovEnt words[1024] = {};
 int init_module(void) {
     int t = register_chrdev(89,"mkov",&fops);
     if(t<0) {
-        printk(KERN_ALERT "MKOV MODULE COULD NOT INIT AAAAAAAAA");
+        printk(KERN_ALERT "Markov module could not initalize.");
     } else {
-        printk(KERN_ALERT "mkov module init'd. Insanity loaded into kernel. Good job hero.");
+        printk(KERN_ALERT "Markov module initalized.");
     }
 
     return t;
@@ -54,7 +54,7 @@ void cleanup_module(void) {
 }
 
 static int dev_open(struct inode *inod,struct file *fil) {
-    return 0; // Who actually cares?!
+    return 0; // We have loaded
 }
 
 static char msg[20]={0};
@@ -121,7 +121,7 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
                 matchlist[matches] = i;
                 matches++;
             } else {
-                printk(KERN_ALERT "[Read] wtf %s -> %s",words[i].word,lastwordread);
+                printk(KERN_ALERT "[Read] Something happened %s -> %s",words[i].word,lastwordread);
             }
         }
 
@@ -130,8 +130,8 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
 
     if(matches == 0) {
         printk(KERN_ALERT "[Read] No matches to word found. abort.");
-        // So I am now going to copy a random work (provided there is one in there) to the 
-        // lastwordread array. to spice things up a tad.
+        // So I am now going to copy a random word (provided there is one in there) to the 
+        // lastwordread array.
         int pickR = get_jiffies_64();
 
         memset(lastwordread,0x00,20);
@@ -174,10 +174,13 @@ static ssize_t dev_read(struct file *foole,char *buff,size_t len,loff_t *off) {
         target = target - words[matchlist[i]].times;
 
         if(target < 0) {
-            // WE HAVE GOT IT LADIES AND GENTLEMEN.
+            // We have got a word
+            for (j = 0; j < 19; ++j) {
+                lastwordread[j] = 0x00;
+            }
+            // We have a word
             memset(lastwordread, 0x00, 20);
             memcpy(lastwordread, words[matchlist[i]].word, 20);
-
             while (len && (words[matchlist[i]].word[readPos]!=0))
             {
                 put_user(words[matchlist[i]].word[readPos],buff++); //copy byte from kernel space to user space
@@ -207,7 +210,7 @@ static ssize_t dev_write(struct file *foole,const char *buff,size_t len,loff_t *
         if(letter == 0x2E || letter == 0x20 || letter == 0x2C || letter == 0x0D || letter == 0x0A ) {
             // Check how much is in the word buffer
             if(wordsize == 0) {
-                // Then this is useless
+                // If the word is zero, it's useless.
                 continue;
             } else {
                 int i; // C99 mode
